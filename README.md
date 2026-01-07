@@ -180,7 +180,7 @@ $apiUrl = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/E-A0016-001?Authori
 
 
 ## 📄 授權 (License)
-* License
+* [MIT License](https://github.com/alex921024/earthquake_system/tree/main#) 
 * 本專案為學術研究與教育用途。資料來源：中央氣象署 (CWA) 開放資料平台。
 
 
