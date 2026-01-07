@@ -180,8 +180,7 @@ $apiUrl = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/E-A0016-001?Authori
 
 
 ## 📄 授權 (License)
-* MIT License
-* 本專案為學術研究與教育用途。
-資料來源：中央氣象署 (CWA) 開放資料平台。
+* License
+* 本專案為學術研究與教育用途。資料來源：中央氣象署 (CWA) 開放資料平台。
 
 
