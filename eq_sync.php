@@ -14,7 +14,7 @@ if ($_SESSION['role'] != 0) {
 }
 
 // API 設定
-$apiKey = "CWA-0DCCB2D8-85E0-40CA-849E-1F1DCF358C2A"; 
+$apiKey = ""; 
 $apiUrl = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/E-A0016-001?Authorization={$apiKey}&format=JSON";
 
 $ch = curl_init();
@@ -66,4 +66,5 @@ if ($data && isset($data['success']) && $data['success'] === 'true') {
     header("Location: index.php?status=error");
     exit;
 }
+
 ?>
