@@ -158,9 +158,13 @@ $user = 'root'; // 您的資料庫帳號
 $pass = '';     // 您的資料庫密碼
 
 ```
+3. 修改 `eq_sync.php` 設定你自己的API:
+```php
+$apiKey = "自己的API"; 
+$apiUrl = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/E-A0016-001?Authorization={$apiKey}&format=JSON";
+```
 
-
-3. 確保 `video/` 資料夾內有背景影片檔 (`light.mp4`) 。
+4. 確保 `video/` 資料夾內有背景影片檔 (`light.mp4`) 。
 
 
 
@@ -173,11 +177,7 @@ $pass = '';     // 您的資料庫密碼
 
 ---
 
-## 📸 畫面截圖 (Screenshots)
 
-*(建議在此處上傳您的系統截圖，例如首頁儀表板、地圖熱力圖模式、手機版畫面等)*
-
----
 
 ## 📄 授權 (License)
 
