@@ -1,0 +1,78 @@
+-- 1. 建立資料庫
+CREATE DATABASE IF NOT EXISTS earthquake_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- 2. 選擇資料庫
+USE earthquake_system;
+
+-- 3. 建立地震資料表
+CREATE TABLE IF NOT EXISTS earthquake_data (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    origin_time DATETIME NOT NULL,
+    longitude FLOAT,
+    latitude FLOAT,
+    depth FLOAT,
+    magnitude FLOAT,
+    location_desc TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- 設定唯一索引，避免同一個地震重複寫入
+    UNIQUE KEY unique_eq (origin_time, longitude, latitude)
+);
+
+-- 4. 使用者資料表
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE users ADD COLUMN role TINYINT DEFAULT 1;
+
+-- 5. 地震留言資料表
+CREATE TABLE fear_reports (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    earthquake_id INT NOT NULL,
+    score TINYINT NOT NULL CHECK (score BETWEEN 1 AND 10),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_report (user_id, earthquake_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (earthquake_id) REFERENCES earthquake_data(id)
+);
+
+erDiagram
+    %% 使用者資料表
+    USERS {
+        int id PK "主鍵"
+        string username "帳號"
+        string password "密碼 (Hash)"
+        int role "0:管理員, 1:一般用戶"
+        datetime created_at
+    }
+
+    %% 地震資料表
+    EARTHQUAKE_DATA {
+        int id PK "主鍵"
+        datetime origin_time "地震時間"
+        decimal magnitude "規模"
+        decimal depth "深度"
+        decimal latitude "緯度"
+        decimal longitude "經度"
+        string location_desc "位置描述"
+    }
+
+    %% 可怕程度回報表 (關聯表)
+    FEAR_REPORTS {
+        int id PK "主鍵"
+        int user_id FK "外鍵 -> USERS"
+        int earthquake_id FK "外鍵 -> EARTHQUAKE_DATA"
+        tinyint score "分數 (1-10)"
+        datetime created_at "回報時間"
+    }
+
+    %% 關係定義
+    %% 一個使用者可以有多個回報 (1 對 多)
+    USERS ||--o{ FEAR_REPORTS : "提交 (submits)"
+    
+    %% 一個地震可以有多個回報 (1 對 多)
+    EARTHQUAKE_DATA ||--o{ FEAR_REPORTS : "擁有 (has)"
