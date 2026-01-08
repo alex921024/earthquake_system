@@ -10,7 +10,6 @@ $roleName = ($_SESSION['role'] == 0) ? "管理員 (Admin)" : "一般使用者";
 
 $viewAll = isset($_GET['view']) && $_GET['view'] == 'all';
 
-// 修改 SQL：增加 avg_score (平均分) 與 report_count (回報人數) 的子查詢
 if ($viewAll) {
     $sql = "SELECT e.*, 
             (SELECT AVG(score) FROM fear_reports WHERE earthquake_id = e.id) as avg_score,
@@ -34,7 +33,6 @@ if ($viewAll) {
 
 $earthquakes = $pdo->query($sql)->fetchAll();
 
-// 地圖用的資料也需要同樣的欄位，以便未來彈出視窗可以用
 $mapSql = "SELECT e.*, 
            (SELECT AVG(score) FROM fear_reports WHERE earthquake_id = e.id) as avg_score
            FROM earthquake_data e 
@@ -146,7 +144,6 @@ $eqJson = json_encode($mapEarthquakes);
         .fear-btn { background: #444; color: white; border: none; padding: 5px 15px; border-radius: 20px; font-size: 0.8em; cursor: pointer; transition: 0.2s; }
         .fear-btn:hover { background: var(--primary-red); }
         
-        /* 平均分數的樣式 */
         .avg-fear-display {
             background: rgba(255, 82, 82, 0.1);
             color: #ff8a80;
@@ -177,9 +174,15 @@ $eqJson = json_encode($mapEarthquakes);
     <header>
         <h1>台灣小區域地震觀測</h1>
         <?php if ($_SESSION['role'] == 0): ?>
-            <form action="eq_sync.php" method="POST">
-                <button type="submit" class="sync-btn" name="start_sync">📡 同步最新資料</button>
-            </form>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+                <form action="eq_sync.php" method="POST" style="margin:0;">
+                    <button type="submit" class="sync-btn" name="start_sync">📡 同步最新資料</button>
+                </form>
+                
+                <a href="admin.php" style="text-decoration:none;">
+                    <button class="sync-btn" style="background: linear-gradient(135deg, #424242, #616161);">🛠️ 進入後台管理</button>
+                </a>
+            </div>
         <?php endif; ?>
 
         <?php if(isset($_GET['status'])): ?>
@@ -224,7 +227,6 @@ $eqJson = json_encode($mapEarthquakes);
                 $timeStr = $dateTime->format('H:i');
                 $magClass = ($eq['magnitude'] >= 4.0) ? 'mag-high' : 'mag';
                 
-                // 處理平均分數
                 $avgScore = $eq['avg_score'] ? number_format($eq['avg_score'], 1) : null;
                 $reportCount = $eq['report_count'] ? $eq['report_count'] : 0;
             ?>
@@ -314,7 +316,6 @@ $eqJson = json_encode($mapEarthquakes);
                 color: color, fillColor: color, fillOpacity: 0.7, radius: radius, bubblingMouseEvents: false
             });
 
-            // Popup 顯示增加平均分數 (如果有的話)
             var avgText = (eq.avg_score) ? `<br>👥 平均恐懼: <b>${parseFloat(eq.avg_score).toFixed(1)}</b>` : "";
 
             circle.bindPopup(`
@@ -428,8 +429,6 @@ $eqJson = json_encode($mapEarthquakes);
                 btn.innerText = '已送出';
                 btn.style.background = '#4caf50';
                 btn.disabled = true;
-                // 重新整理頁面以更新平均分數 (簡單作法)
-                // location.reload(); 
             } else {
                 alert(data.msg);
             }
