@@ -81,16 +81,56 @@ $earthquakes = $pdo->query("SELECT * FROM earthquake_data ORDER BY origin_time D
         .container { max-width: 1000px; margin: 0 auto; }
         h1, h2 { border-left: 5px solid var(--accent); padding-left: 10px; }
         .msg { background: #333; color: #69f0ae; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+        
         table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background: var(--card); }
         th, td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; }
         th { background: #2c2c2c; }
         tr:hover { background: #252526; }
+
         .form-box { background: var(--card); padding: 20px; border-radius: 10px; margin-bottom: 30px; border: 1px solid var(--border); }
-        input, select { background: #333; border: 1px solid #555; color: white; padding: 8px; border-radius: 4px; margin-right: 5px; }
+        
+        /* Grid Layout Fixes */
+        .form-box form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-box div {
+            display: flex;
+            flex-direction: column; 
+            justify-content: flex-start;
+        }
+        .form-box label {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #bbb;
+            font-weight: bold;
+        }
+        .form-box input, .form-box select {
+            width: 100%;
+            box-sizing: border-box;
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        .form-box input:focus {
+            border-color: #2979ff;
+            outline: none;
+        }
+        .btn-container {
+            grid-column: span 2; 
+            text-align: right; 
+            margin-top: 10px;
+        }
+
         button { cursor: pointer; padding: 8px 15px; border-radius: 4px; border: none; font-weight: bold; }
         .btn-add { background: #2979ff; color: white; }
         .btn-del { background: #d32f2f; color: white; }
         .btn-edit { background: #ff9800; color: white; }
+        
         .nav-btn { display: inline-block; padding: 10px 20px; background: #555; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px; }
         .nav-btn:hover { background: #777; }
     </style>
@@ -107,14 +147,38 @@ $earthquakes = $pdo->query("SELECT * FROM earthquake_data ORDER BY origin_time D
 
     <div class="form-box">
         <h2>➕ 手動新增地震資料</h2>
-        <form method="POST" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div><label>發生時間：</label><input type="datetime-local" name="origin_time" required style="width:90%"></div>
-            <div><label>芮氏規模：</label><input type="number" step="0.1" name="magnitude" required placeholder="例如 5.5"></div>
-            <div><label>深度 (km)：</label><input type="number" step="0.1" name="depth" required placeholder="例如 10.2"></div>
-            <div><label>緯度 (Lat)：</label><input type="number" step="0.0001" name="latitude" required placeholder="例如 23.5"></div>
-            <div><label>經度 (Lon)：</label><input type="number" step="0.0001" name="longitude" required placeholder="例如 121.5"></div>
-            <div style="grid-column: span 2;"><label>位置描述：</label><input type="text" name="location_desc" required placeholder="例如 花蓮縣政府東北方..." style="width: 95%"></div>
-            <div style="grid-column: span 2; text-align: right;">
+        <form method="POST">
+            <div style="grid-column: span 2;">
+                <label>📅 發生時間：</label>
+                <input type="datetime-local" name="origin_time" required>
+            </div>
+
+            <div>
+                <label>📊 芮氏規模：</label>
+                <input type="number" step="0.1" name="magnitude" required placeholder="例如 5.5">
+            </div>
+
+            <div>
+                <label>📉 深度 (km)：</label>
+                <input type="number" step="0.1" name="depth" required placeholder="例如 10.2">
+            </div>
+
+            <div>
+                <label>🌐 緯度 (Lat)：</label>
+                <input type="number" step="0.0001" name="latitude" required placeholder="例如 23.5">
+            </div>
+
+            <div>
+                <label>🌐 經度 (Lon)：</label>
+                <input type="number" step="0.0001" name="longitude" required placeholder="例如 121.5">
+            </div>
+
+            <div style="grid-column: span 2;">
+                <label>📍 位置描述：</label>
+                <input type="text" name="location_desc" required placeholder="例如 花蓮縣政府東北方...">
+            </div>
+
+            <div class="btn-container">
                 <button type="submit" name="add_eq" class="btn-add">新增資料</button>
             </div>
         </form>
@@ -138,7 +202,7 @@ $earthquakes = $pdo->query("SELECT * FROM earthquake_data ORDER BY origin_time D
                 <td>
                     <form method="POST" style="display:inline;">
                         <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
-                        <select name="new_role">
+                        <select name="new_role" style="width:auto; padding:5px;">
                             <option value="1" <?= $u['role'] == 1 ? 'selected' : '' ?>>一般使用者</option>
                             <option value="0" <?= $u['role'] == 0 ? 'selected' : '' ?>>管理員</option>
                         </select>
